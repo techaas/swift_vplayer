@@ -15,6 +15,7 @@
 		F2F7712025DCAC7200C024A1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2F7711E25DCAC7200C024A1 /* LaunchScreen.storyboard */; };
 		F2F7712B25DCAC7300C024A1 /* SimpleVPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F7712A25DCAC7300C024A1 /* SimpleVPlayerTests.swift */; };
 		F2F7713625DCAC7300C024A1 /* SimpleVPlayerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F7713525DCAC7300C024A1 /* SimpleVPlayerUITests.swift */; };
+		F2F7714A25DCBECF00C024A1 /* sample.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F2F7714925DCBE4B00C024A1 /* sample.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		F2F7713125DCAC7300C024A1 /* SimpleVPlayerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleVPlayerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2F7713525DCAC7300C024A1 /* SimpleVPlayerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVPlayerUITests.swift; sourceTree = "<group>"; };
 		F2F7713725DCAC7300C024A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F2F7714925DCBE4B00C024A1 /* sample.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample.mp4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		F2F7710725DCAC6F00C024A1 = {
 			isa = PBXGroup;
 			children = (
+				F2F7714925DCBE4B00C024A1 /* sample.mp4 */,
 				F2F7711225DCAC6F00C024A1 /* SimpleVPlayer */,
 				F2F7712925DCAC7300C024A1 /* SimpleVPlayerTests */,
 				F2F7713425DCAC7300C024A1 /* SimpleVPlayerUITests */,
@@ -231,6 +234,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2F7714A25DCBECF00C024A1 /* sample.mp4 in Resources */,
 				F2F7712025DCAC7200C024A1 /* LaunchScreen.storyboard in Resources */,
 				F2F7711D25DCAC7200C024A1 /* Assets.xcassets in Resources */,
 				F2F7711B25DCAC6F00C024A1 /* Main.storyboard in Resources */,
@@ -436,8 +440,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3JG9H6XQWA;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SimpleVPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -445,6 +449,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.techaas.dev.ios.SimpleVPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -455,8 +460,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3JG9H6XQWA;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SimpleVPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -464,6 +469,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.techaas.dev.ios.SimpleVPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
