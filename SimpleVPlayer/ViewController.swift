@@ -1,8 +1,8 @@
+//  Copyright (c) 2021, TECHaas.com. All rights reserved.
 //
 //  ViewController.swift
 //  SimpleVPlayer
 //
-//  Copyright (c) 2021, TECHaas.com. All rights reserved.
 //  Created by Koushi Takahashi on 2021/02/17.
 //
 
@@ -25,6 +25,17 @@ class ViewController: UIViewController {
 
         // 再生
         self.playerView.player?.play()
+    }
+
+    // 回転した時に中身のサイズも変える
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        playerView.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        self.playerView.layoutIfNeeded()
+
+        label?.frame = CGRect(x: size.width - 100, y: size.height - 30, width: 50, height: 10)
+        self.label?.layoutIfNeeded()
     }
 
     // 映像再生
@@ -57,7 +68,7 @@ class ViewController: UIViewController {
         label?.textAlignment = NSTextAlignment.right;
         label?.font = UIFont.monospacedSystemFont(ofSize: 10, weight: UIFont.Weight.regular)
         label?.textColor = UIColor.white
-        self.view.addSubview(label!)
+        self.playerView.addSubview(label!)
 
         // 動画のループ再生
         NotificationCenter.default.addObserver(self,
@@ -66,13 +77,20 @@ class ViewController: UIViewController {
                                                object: nil)
     }
 
+    // 動画を最初に巻き戻す
+    @objc private func playerItemDidReachEnd(_ notification: Notification) {
+        // print("loop")
+        self.playerView.player?.currentItem?.seek(to: CMTime.zero, completionHandler: nil)
+    }
+
+    // MARK: - Gesture
     // 画面がタップされた時に反応させる
     private func setupGesture() {
         let tapGesture:UITapGestureRecognizer = UITapGestureRecognizer(
             target: self,
             action: #selector(ViewController.tapped(_:)))
 
-        self.view.addGestureRecognizer(tapGesture)
+        self.playerView.addGestureRecognizer(tapGesture)
     }
 
     // 画面のタップ
@@ -90,13 +108,7 @@ class ViewController: UIViewController {
         }
     }
 
-    // 動画を最初に巻き戻す
-    @objc private func playerItemDidReachEnd(_ notification: Notification) {
-        // print("loop")
-        self.playerView.player?.currentItem?.seek(to: CMTime.zero, completionHandler: nil)
-    }
-
-    // MARK: Periodic Time Observer
+    // MARK: - Periodic Time Observer
     func addPeriodicTimeObserver() {
         // Notify every half second
         let timeScale = CMTimeScale(NSEC_PER_SEC)
@@ -119,10 +131,10 @@ class ViewController: UIViewController {
         }
     }
 
-
-    // see dev doc. AVPlayerLayer.
+    // MARK: - Player View
     final class PlayerView: UIView {
 
+        // see dev doc. AVPlayerLayer.
         var player: AVPlayer? {
             get { return playerLayer.player }
             set { playerLayer.player = newValue }
