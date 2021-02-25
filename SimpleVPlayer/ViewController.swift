@@ -12,28 +12,34 @@ import AVFoundation
 
 class ViewController: UIViewController {
 
-    private let playerView = AVPlayerView()
+    private let playerView = PlayerView()
+    var timeObserverToken: Any?
+    var label: UILabel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupPlayer()
+
+        setupGesture()
+
+        // 再生
+        self.playerView.player?.play()
+    }
+
+    // 映像再生
+    private func setupPlayer() {
         playerView.frame = CGRect(x: self.view.frame.origin.x,
                                   y: self.view.frame.origin.y,
                                   width: self.view.frame.width,
                                   height: self.view.frame.height)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(playerItemDidReachEnd(_:)),
-                                               name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
-                                               object: nil)
-
         // https://www.home-movie.biz/free_movie.html
         //
-        guard let path = Bundle.main.path(forResource: "sample", ofType:"mp4") else {
-            debugPrint("sample.mp4 not found")
+        guard let url = Bundle.main.url(forResource: "sample", withExtension:"mp4") else {
+            debugPrint("file not found")
             return
         }
-        let url = URL(fileURLWithPath: path)
 
         // 生成
         self.playerView.player = AVPlayer(url: url)
@@ -43,43 +49,100 @@ class ViewController: UIViewController {
         self.playerView.setVideoFillMode(mode: AVLayerVideoGravity.resizeAspect.rawValue)
         self.view.addSubview(self.playerView)
 
-        // 再生
-        self.playerView.player?.play()
+        addPeriodicTimeObserver()
+
+        // 時間表示用
+        label = UILabel(frame: CGRect(x:self.view.frame.width - 100, y:self.view.frame.height - 30,
+                                          width:50, height: 10))
+        label?.textAlignment = NSTextAlignment.right;
+        label?.font = UIFont.monospacedSystemFont(ofSize: 10, weight: UIFont.Weight.regular)
+        label?.textColor = UIColor.white
+        self.view.addSubview(label!)
+
+        // 動画のループ再生
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerItemDidReachEnd(_:)),
+                                               name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
+                                               object: nil)
     }
 
+    // 画面がタップされた時に反応させる
+    private func setupGesture() {
+        let tapGesture:UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(ViewController.tapped(_:)))
+
+        self.view.addGestureRecognizer(tapGesture)
+    }
+
+    // 画面のタップ
+    @objc func tapped(_ sender: UITapGestureRecognizer){
+        if sender.state == .ended {
+            if let player = self.playerView.player {
+                if (player.rate != 0 && player.error == nil) {
+                    print("Pause")
+                    player.pause()
+                } else {
+                    print("Start")
+                    player.play()
+                }
+            }
+        }
+    }
+
+    // 動画を最初に巻き戻す
     @objc private func playerItemDidReachEnd(_ notification: Notification) {
-        // 動画を最初に巻き戻す
-        print("movie reached end")
+        // print("loop")
         self.playerView.player?.currentItem?.seek(to: CMTime.zero, completionHandler: nil)
     }
 
-    final class AVPlayerView: UIView {
+    // MARK: Periodic Time Observer
+    func addPeriodicTimeObserver() {
+        // Notify every half second
+        let timeScale = CMTimeScale(NSEC_PER_SEC)
+        let time = CMTime(seconds: 0.01, preferredTimescale: timeScale)
+
+        timeObserverToken = self.playerView.player?.addPeriodicTimeObserver(forInterval: time,
+                                                           queue: .main)
+        { [weak self] time in
+            // update player transport UI
+            DispatchQueue.main.async {
+                self?.label?.text = NSString(format: "%.2f s", CMTimeGetSeconds(time)) as String
+            }
+        }
+    }
+
+    func removePeriodicTimeObserver() {
+        if let timeObserverToken = self.timeObserverToken {
+            self.playerView.player?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
+    }
+
+
+    // see dev doc. AVPlayerLayer.
+    final class PlayerView: UIView {
 
         var player: AVPlayer? {
-            get {
-                let layer: AVPlayerLayer = self.layer as! AVPlayerLayer
-                return layer.player
-            }
-            set(newValue) {
-                let layer: AVPlayerLayer = self.layer as! AVPlayerLayer
-                layer.player = newValue
-            }
+            get { return playerLayer.player }
+            set { playerLayer.player = newValue }
         }
 
-        // MARK: - OverrideMethod
+        var playerLayer: AVPlayerLayer {
+            return layer as! AVPlayerLayer
+        }
 
-        override public class var layerClass: Swift.AnyClass {
+        override static var layerClass: AnyClass {
             return AVPlayerLayer.self
         }
-
-        // MARK: - Public Method
 
         /// アスペクト比を維持
         /// - Parameter mode: AVLayerVideoGravity
         func setVideoFillMode(mode: String) {
-            let layer: AVPlayerLayer = self.layer as! AVPlayerLayer
-            layer.videoGravity = AVLayerVideoGravity(rawValue: mode)
+            playerLayer.videoGravity = AVLayerVideoGravity(rawValue: mode)
         }
     }
 }
+
+
 
